@@ -63,12 +63,13 @@ models = {
     },
     'SVM (RBF)': {
         'model': SVR(kernel='rbf'),
-        'params': {'C': [1, 10, 100], 'gamma': [0.01, 0.1, 1.0], 'epsilon': [0.1, 0.5]},
+        'params': {'C': [0.1, 1, 10], 'gamma': ['scale', 'auto'], 'epsilon': [0.1, 0.5]},
         'need_scale': True,
     },
     'Random Forest': {
         'model': RandomForestRegressor(random_state=42),
-        'params': {'n_estimators': [100, 200], 'max_depth': [5, 10, 15], 'max_features': ['sqrt', 'log2']},
+        'params': {'n_estimators': [100, 200, 500], 'max_depth': [5, 10, 15, None],
+                   'max_features': ['sqrt', 'log2', 0.5], 'min_samples_leaf': [1, 2, 5]},
         'need_scale': False,
     },
 }

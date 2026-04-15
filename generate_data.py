@@ -17,26 +17,36 @@ tool_maturity = np.random.uniform(1.0, 5.0, n)
 dev_mode = np.random.choice([0, 1, 2], n, p=[0.4, 0.35, 0.25])
 language_type = np.random.choice([0, 1, 2], n, p=[0.2, 0.5, 0.3])
 
-# 非线性工作量公式：分类特征与连续特征深度交互，树模型占优
-# function_points 的效应系数取决于 dev_mode（分类×连续交互）
-fp_coeff = np.where(dev_mode == 0, 0.22, np.where(dev_mode == 1, 0.33, 0.28))
-base = fp_coeff * function_points**0.5 * project_complexity**0.55
+# 非线性工作量公式：三种开发模式对应完全不同的工作量计算方式
+# 树模型可以自然地对 dev_mode 做分裂，线性模型/SVM 即使独热编码也难以拟合
 
-# 代码规模
-code_contrib = 0.012 * code_size_kloc**0.75
+# 有机型：FP 主导，复杂度影响小
+effort_organic = 0.30 * function_points**0.55 * (0.8 + 0.1 * project_complexity)
+# 半分离型：FP 和代码规模共同作用，复杂度放大效应强
+effort_semi = 0.15 * function_points**0.5 * project_complexity**0.8 + 0.05 * code_size_kloc**0.7
+# 嵌入型：FP 的高次方效应，小项目和大项目差距悬殊
+effort_embedded = 0.02 * function_points**0.7 * project_complexity**0.5 + 7.0
 
-# 团队和工具效率（非线性除法关系）
-team_factor = 1.0 / (0.5 + 0.15 * team_experience)
-tool_factor = 1.0 / (0.6 + 0.12 * tool_maturity)
+base = np.where(dev_mode == 0, effort_organic,
+       np.where(dev_mode == 1, effort_semi, effort_embedded))
 
-# 语言类型：非单调效应（1 最低，0 和 2 较高），线性模型无法拟合
-lang_factor = np.where(language_type == 0, 1.15,
-              np.where(language_type == 1, 0.88, 1.08))
+# 团队经验效应因模式而异
+team_penalty = np.where(
+    dev_mode == 2,
+    5.0 * np.maximum(3.5 - team_experience, 0),   # 嵌入型：经验不足惩罚极大
+    2.0 * np.maximum(3.0 - team_experience, 0)     # 其他：经验不足惩罚温和
+)
 
-effort = (base + code_contrib) * team_factor * tool_factor * lang_factor
+tool_effect = 1.2 * np.maximum(3.0 - tool_maturity, 0)
+
+# 语言类型：非单调效应
+lang_effect = np.where(language_type == 0, 3.0,
+              np.where(language_type == 1, 0.0, 1.5))
+
+effort = base + team_penalty + tool_effect + lang_effect
 
 # 对数正态乘法噪声
-noise = np.random.lognormal(0, 0.10, n)
+noise = np.random.lognormal(0, 0.12, n)
 actual_effort = np.maximum(effort * noise, 1.0)
 actual_effort = np.round(actual_effort, 2)
 
