@@ -70,6 +70,8 @@ for name, cfg in models.items():
     print(f"{name:<28} {pred:>12.2f}")
 
 print("-" * 50)
+svm_pred = predictions['SVM (RBF)']
 rf_pred = predictions['Random Forest']
-print(f"\n>>> 推荐结果（随机森林）: {rf_pred:.2f} 人月")
-print(f"    即约 {rf_pred:.1f} 个人工作 1 个月，或 1 个人工作 {rf_pred:.1f} 个月")
+print(f"\n>>> 推荐结果（SVM）: {svm_pred:.2f} 人月")
+print(f"    随机森林预测: {rf_pred:.2f} 人月")
+print(f"    即约 {svm_pred:.1f} 个人工作 1 个月，或 1 个人工作 {svm_pred:.1f} 个月")
