@@ -63,7 +63,7 @@ models = {
     },
     'SVM (RBF)': {
         'model': SVR(kernel='rbf'),
-        'params': {'C': [1, 10, 100], 'gamma': ['scale'], 'epsilon': [0.5, 1.0]},
+        'params': {'C': [1, 10, 100], 'gamma': ['scale', 0.01, 0.1], 'epsilon': [0.1, 0.5]},
         'need_scale': True,
     },
     'Random Forest': {

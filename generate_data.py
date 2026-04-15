@@ -6,7 +6,7 @@ import numpy as np
 import pandas as pd
 
 np.random.seed(42)
-n = 300
+n = 500
 
 # 生成特征
 function_points = np.random.uniform(50, 1500, n)
