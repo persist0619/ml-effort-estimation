@@ -1,95 +1,67 @@
 # 基于机器学习的软件项目工作量估算研究与应用
 
-本科毕业论文配套演示系统，使用 Python 实现软件项目工作量估算的机器学习方法对比与分析。
+本科毕业论文配套演示系统。基于 Streamlit 构建的 Web 应用，实现软件项目工作量的机器学习估算、多模型对比、报告生成与历史数据管理。
+
+## 快速启动
+
+```bash
+# 1. 创建虚拟环境并安装依赖
+uv venv && source .venv/bin/activate && uv pip install -r requirements.txt
+
+# 2. 启动 Web 应用
+streamlit run app.py
+```
+
+浏览器打开 http://localhost:8501 即可使用。
+
+## 系统功能
+
+| 页面 | 功能 |
+|------|------|
+| 首页 | 系统概览、数据集统计 |
+| 数据探索 | 分布直方图、散点图、相关性热力图、箱线图 |
+| 模型训练 | 4 模型训练对比（10 次重复实验）、性能指标柱状图 |
+| 工作量预测 | 输入项目参数 → 4 模型预测 → 工期换算 → PDF 报告下载 → 保存到数据库 |
+| 特征分析 | 随机森林特征重要性排名与可视化 |
+| 历史记录 | 历史估算数据查看、多项目对比、记录管理 |
+
+支持同时评估两个项目并排对比。
 
 ## 项目结构
 
 ```
+├── app.py                      # Streamlit 入口（首页）
+├── pages/
+│   ├── 1_数据探索.py            # 数据集统计与可视化
+│   ├── 2_模型训练.py            # 模型训练与对比
+│   ├── 3_工作量预测.py          # 预测 → 报告 → 存储（核心）
+│   ├── 4_特征分析.py            # 特征重要性分析
+│   └── 5_历史记录.py            # 历史数据与多项目对比
+├── core/
+│   ├── models.py               # 模型定义、训练、预测逻辑
+│   ├── metrics.py              # MMRE、Pred(25) 等指标计算
+│   ├── database.py             # SQLite 数据库操作
+│   └── report.py               # PDF 报告生成
 ├── data/
-│   └── software_projects.csv   # 模拟数据集（500条记录）
-├── generate_data.py            # 数据生成脚本（运行一次即可）
-├── 1_data_explore.py           # 数据探索与可视化
-├── 2_model_train.py            # 模型训练与对比
-├── 3_predict.py                # 工作量预测
-├── 4_feature_analysis.py       # 特征重要性分析
+│   └── software_projects.csv   # 模拟数据集（500 条）
+├── generate_data.py            # 数据生成脚本
 ├── requirements.txt            # Python 依赖
-├── design.md                   # 系统设计文档
-└── plan.md                     # 实施计划
+└── estimation.db               # SQLite 数据库（自动创建）
 ```
 
-## 环境准备
+## 技术栈
 
-需要 Python 3.9+，推荐使用虚拟环境：
-
-```bash
-# 使用 uv（推荐）
-uv venv
-source .venv/bin/activate
-uv pip install -r requirements.txt
-
-# 或使用 pip
-python3 -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
-```
-
-## 使用方法
-
-按顺序运行以下脚本：
-
-### 1. 数据探索
-
-```bash
-python3 1_data_explore.py
-```
-
-展示数据集的基本统计信息，弹出 4 张图表：
-- 工作量分布直方图
-- 各特征与工作量的散点图
-- 特征相关性热力图
-- 箱线图（异常值检测）
-
-### 2. 模型训练与对比
-
-```bash
-python3 2_model_train.py
-```
-
-训练 4 个机器学习模型（线性回归、决策树、SVM、随机森林），通过网格搜索 + 5 折交叉验证调参，重复 10 次实验取平均值。输出：
-- 控制台打印各模型的 MAE、RMSE、MMRE、Pred(25) 指标
-- 弹出 4 指标对比柱状图
-
-### 3. 工作量预测
-
-```bash
-python3 3_predict.py
-```
-
-使用训练好的模型对新项目进行工作量预测。修改脚本顶部的 `PROJECT_PARAMS` 字典即可输入不同的项目参数：
-
-```python
-PROJECT_PARAMS = {
-    'function_points': 300,       # 功能点计数 (50-1500)
-    'project_complexity': 3.0,    # 项目复杂度 (1.0-5.0)
-    'code_size_kloc': 50,         # 代码规模/千行 (5-500)
-    'team_experience': 3.5,       # 团队经验 (1.0-5.0)
-    'tool_maturity': 3.0,         # 开发环境成熟度 (1.0-5.0)
-    'dev_mode': 1,                # 开发模式 (0=有机型, 1=半分离型, 2=嵌入型)
-    'language_type': 1,           # 语言类型 (0=低级, 1=高级, 2=超高级)
-}
-```
-
-### 4. 特征重要性分析
-
-```bash
-python3 4_feature_analysis.py
-```
-
-基于随机森林模型分析各特征对工作量的影响程度，输出特征重要性排名和水平条形图。
+| 组件 | 技术 |
+|------|------|
+| Web 框架 | Streamlit |
+| 机器学习 | scikit-learn（Ridge、决策树、SVM、随机森林） |
+| 交互式图表 | Plotly |
+| 数据库 | SQLite |
+| PDF 报告 | fpdf2 |
 
 ## 数据集说明
 
-`data/software_projects.csv` 包含 500 条模拟的软件项目数据，字段如下：
+`data/software_projects.csv` 包含 500 条模拟数据，基于 COCOMO 模型特征分布构造。
 
 | 字段 | 说明 | 取值范围 |
 |------|------|----------|
@@ -98,16 +70,12 @@ python3 4_feature_analysis.py
 | code_size_kloc | 代码规模（千行） | 5-500 |
 | team_experience | 团队经验水平 | 1.0-5.0 |
 | tool_maturity | 开发环境成熟度 | 1.0-5.0 |
-| dev_mode | 开发模式 | 0/1/2 |
-| language_type | 语言类型 | 0/1/2 |
-| actual_effort | 实际工作量（人月） | 1-100 |
+| dev_mode | 开发模式 | 0=有机型 / 1=半分离型 / 2=嵌入型 |
+| language_type | 语言类型 | 0=低级 / 1=高级 / 2=超高级 |
+| actual_effort | 实际工作量（人月） | 3-35 |
 
-如需重新生成数据：`python3 generate_data.py`
+如需重新生成：`python3 generate_data.py`
 
-## 依赖
+## 原始脚本
 
-- scikit-learn >= 1.2.0
-- pandas >= 1.5.0
-- numpy >= 1.23.0
-- matplotlib >= 3.6.0
-- seaborn >= 0.12.0
+项目根目录下的 `1_data_explore.py`、`2_model_train.py`、`3_predict.py`、`4_feature_analysis.py` 为早期独立脚本版本，保留作为参考。Web 应用已将其逻辑迁移至 `core/` 模块和 `pages/` 页面中。
