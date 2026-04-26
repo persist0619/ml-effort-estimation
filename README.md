@@ -4,12 +4,25 @@
 
 ## 快速启动
 
+### macOS / Linux
+
 ```bash
-# 1. 创建虚拟环境并安装依赖
+# 安装依赖
 uv venv && source .venv/bin/activate && uv pip install -r requirements.txt
 
-# 2. 启动 Web 应用
+# 启动
 streamlit run app.py
+```
+
+### Windows (PowerShell)
+
+```powershell
+# 安装依赖（使用国内镜像，避免 SSL 问题）
+python -m ensurepip
+python -m pip install -r requirements.txt -i https://mirrors.aliyun.com/pypi/simple/ --trusted-host mirrors.aliyun.com
+
+# 启动
+python -m streamlit run app.py
 ```
 
 浏览器打开 http://localhost:8501 即可使用。
