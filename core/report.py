@@ -6,9 +6,16 @@ from datetime import datetime
 
 def _find_chinese_font():
     candidates = [
+        # Windows
+        r'C:\Windows\Fonts\msyh.ttc',
+        r'C:\Windows\Fonts\simsun.ttc',
+        r'C:\Windows\Fonts\simhei.ttf',
+        r'C:\Windows\Fonts\simkai.ttf',
+        # macOS
         '/System/Library/Fonts/STHeiti Medium.ttc',
         '/System/Library/Fonts/PingFang.ttc',
         '/System/Library/Fonts/Supplemental/Songti.ttc',
+        # Linux
         '/usr/share/fonts/truetype/wqy/wqy-zenhei.ttc',
     ]
     for path in candidates:
@@ -22,7 +29,7 @@ class ReportPDF(FPDF):
         super().__init__()
         font_path = _find_chinese_font()
         if font_path:
-            self.add_font('Chinese', '', font_path, uni=True)
+            self.add_font('Chinese', '', font_path)
             self.font_name = 'Chinese'
         else:
             self.font_name = 'Helvetica'
