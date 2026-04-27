@@ -80,13 +80,13 @@ def generate_pdf(project_data: dict, predictions: dict, recommended_model: str):
 
     pdf.section_title('1. Project Parameters')
     param_labels = {
-        'function_points': 'Function Points',
-        'project_complexity': 'Project Complexity',
-        'code_size_kloc': 'Code Size (KLoC)',
-        'team_experience': 'Team Experience',
-        'tool_maturity': 'Tool Maturity',
-        'dev_mode': 'Development Mode',
-        'language_type': 'Language Type',
+        'function_points':    'Function Points (功能点计数)',
+        'project_complexity': 'Project Complexity (项目复杂度)',
+        'code_size_kloc':     'Code Size KLoC (代码规模/千行)',
+        'team_experience':    'Team Experience (团队经验)',
+        'tool_maturity':      'Tool Maturity (工具成熟度)',
+        'dev_mode':           'Development Mode (开发模式)',
+        'language_type':      'Language Type (语言类型)',
     }
     dev_mode_names = {0: 'Organic', 1: 'Semi-detached', 2: 'Embedded'}
     lang_type_names = {0: 'Low-level', 1: 'High-level', 2: 'Very high-level'}

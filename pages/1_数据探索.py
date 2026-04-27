@@ -24,7 +24,19 @@ df = pd.read_csv(os.path.join(_PROJECT_ROOT, 'data', 'software_projects.csv'))
 df_display = df.rename(columns=COL_LABELS)
 
 st.subheader('基本统计信息')
-st.dataframe(df_display.describe().round(2), width="stretch")
+STAT_LABELS = {
+    'count': 'count（样本数）',
+    'mean':  'mean（均值）',
+    'std':   'std（标准差）',
+    'min':   'min（最小值）',
+    '25%':   '25%（下四分位数）',
+    '50%':   '50%（中位数）',
+    '75%':   '75%（上四分位数）',
+    'max':   'max（最大值）',
+}
+desc = df_display.describe().round(2)
+desc.index = [STAT_LABELS.get(i, i) for i in desc.index]
+st.dataframe(desc, width="stretch")
 
 missing = df.isnull().sum()
 if missing.sum() == 0:
