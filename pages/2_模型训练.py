@@ -45,7 +45,7 @@ if st.button('开始评估实验'):
             'MMRE': f"{avg['MMRE']:.3f}",
             'Pred(25)': f"{avg['Pred(25)']:.3f}",
         })
-    st.dataframe(pd.DataFrame(rows), use_container_width=True, hide_index=True)
+    st.dataframe(pd.DataFrame(rows), width="stretch", hide_index=True)
 
     metrics = ['MAE', 'RMSE', 'MMRE', 'Pred(25)']
     colors = ['#4C72B0', '#55A868', '#C44E52', '#8172B2']
@@ -63,4 +63,4 @@ if st.button('开始评估实验'):
         ))
         fig.update_layout(title=metric, yaxis_title=metric, height=350)
         with cols[idx]:
-            st.plotly_chart(fig, use_container_width=True)
+            st.plotly_chart(fig, width="stretch")

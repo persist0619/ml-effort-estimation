@@ -12,7 +12,7 @@ importances = get_feature_importances(X, y)
 st.subheader('特征重要性排名')
 imp_df = pd.DataFrame(importances, columns=['特征', '重要性得分'])
 imp_df['重要性得分'] = imp_df['重要性得分'].round(4)
-st.dataframe(imp_df, use_container_width=True, hide_index=True)
+st.dataframe(imp_df, width="stretch", hide_index=True)
 
 st.subheader('特征重要性可视化')
 imp_df_sorted = imp_df.sort_values('重要性得分', ascending=True)
@@ -21,7 +21,7 @@ fig = px.bar(imp_df_sorted, x='重要性得分', y='特征', orientation='h',
              text=imp_df_sorted['重要性得分'].apply(lambda x: f'{x:.3f}'))
 fig.update_layout(height=400, showlegend=False, yaxis_title='', xaxis_title='Feature Importance Score')
 fig.update_traces(textposition='outside')
-st.plotly_chart(fig, use_container_width=True)
+st.plotly_chart(fig, width="stretch")
 
 top3 = imp_df.head(3)
 st.subheader('分析结论')

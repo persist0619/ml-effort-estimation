@@ -28,7 +28,7 @@ st.subheader(f'记录列表（共 {len(filtered)} 条）')
 display_cols = ['id', 'project_name', 'created_at', 'function_points',
                 'project_complexity', 'pred_svm', 'pred_rf', 'recommended_effort']
 available_cols = [c for c in display_cols if c in filtered.columns]
-st.dataframe(filtered[available_cols], use_container_width=True, hide_index=True)
+st.dataframe(filtered[available_cols], width="stretch", hide_index=True)
 
 st.subheader('多项目对比')
 if len(filtered) >= 2:
@@ -55,7 +55,7 @@ if len(filtered) >= 2:
             barmode='group', yaxis_title='Predicted Effort (Person-Months)',
             height=400,
         )
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig, width="stretch")
 else:
     st.caption('至少需要 2 条记录才能进行对比。')
 

@@ -1,3 +1,4 @@
+import os
 import numpy as np
 import pandas as pd
 from sklearn.model_selection import train_test_split, GridSearchCV
@@ -7,6 +8,8 @@ from sklearn.tree import DecisionTreeRegressor
 from sklearn.svm import SVR
 from sklearn.ensemble import RandomForestRegressor
 from core.metrics import evaluate_model
+
+_PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
 FEATURE_COLS = [
@@ -54,7 +57,9 @@ SHORT_NAMES = {
 }
 
 
-def load_data(csv_path='data/software_projects.csv'):
+def load_data(csv_path=None):
+    if csv_path is None:
+        csv_path = os.path.join(_PROJECT_ROOT, 'data', 'software_projects.csv')
     df = pd.read_csv(csv_path)
     X = df[FEATURE_COLS].values
     y = df['actual_effort'].values

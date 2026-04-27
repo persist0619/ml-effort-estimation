@@ -1,7 +1,8 @@
+import os
 import sqlite3
 import pandas as pd
 
-DB_PATH = 'estimation.db'
+DB_PATH = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'estimation.db')
 
 
 def _get_conn():

@@ -1,7 +1,10 @@
+import os
 import streamlit as st
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
+
+_PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 st.set_page_config(page_title='数据探索', layout='wide')
 st.title('数据探索与预处理')
@@ -17,11 +20,11 @@ COL_LABELS = {
     'actual_effort': '实际工作量(人月)',
 }
 
-df = pd.read_csv('data/software_projects.csv')
+df = pd.read_csv(os.path.join(_PROJECT_ROOT, 'data', 'software_projects.csv'))
 df_display = df.rename(columns=COL_LABELS)
 
 st.subheader('基本统计信息')
-st.dataframe(df_display.describe().round(2), use_container_width=True)
+st.dataframe(df_display.describe().round(2), width="stretch")
 
 missing = df.isnull().sum()
 if missing.sum() == 0:
@@ -36,7 +39,7 @@ fig.add_vline(x=df['actual_effort'].mean(), line_dash='dash', line_color='red',
 fig.add_vline(x=df['actual_effort'].median(), line_dash='dash', line_color='orange',
               annotation_text=f"Median={df['actual_effort'].median():.1f}")
 fig.update_layout(xaxis_title='Actual Effort (Person-Months)', yaxis_title='Frequency')
-st.plotly_chart(fig, use_container_width=True)
+st.plotly_chart(fig, width="stretch")
 
 st.subheader('各特征与工作量的关系')
 features = ['function_points', 'project_complexity', 'code_size_kloc',
@@ -48,14 +51,14 @@ for tab, feat in zip(tabs, features):
         fig = px.scatter(df, x=feat, y='actual_effort', opacity=0.6,
                          color_discrete_sequence=['steelblue'])
         fig.update_layout(xaxis_title=COL_LABELS[feat], yaxis_title=COL_LABELS['actual_effort'])
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig, width="stretch")
 
 st.subheader('特征相关性热力图')
 corr = df_display.corr(numeric_only=True).round(2)
 fig = px.imshow(corr, text_auto=True, color_continuous_scale='RdBu_r',
                 zmin=-1, zmax=1, aspect='auto')
 fig.update_layout(width=700, height=600)
-st.plotly_chart(fig, use_container_width=True)
+st.plotly_chart(fig, width="stretch")
 
 st.subheader('箱线图（异常值检测）')
 numeric_cols = ['function_points', 'project_complexity', 'code_size_kloc',
@@ -69,4 +72,4 @@ if selected:
         col = label_to_col[label]
         fig.add_trace(go.Box(y=df[col], name=label))
     fig.update_layout(yaxis_title='数值')
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(fig, width="stretch")

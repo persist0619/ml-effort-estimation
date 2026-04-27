@@ -1,6 +1,9 @@
+import os
 import streamlit as st
 import pandas as pd
 from core.database import init_db
+
+_PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
 
 init_db()
 
@@ -32,7 +35,7 @@ with col2:
 st.markdown('---')
 
 st.subheader('数据集概况')
-df = pd.read_csv('data/software_projects.csv')
+df = pd.read_csv(os.path.join(_PROJECT_ROOT, 'data', 'software_projects.csv'))
 c1, c2, c3, c4 = st.columns(4)
 c1.metric('样本数量', f'{len(df)} 条')
 c2.metric('特征数量', '7 个')

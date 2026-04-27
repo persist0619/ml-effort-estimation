@@ -60,7 +60,7 @@ def render_report(params, predictions):
         '开发模式': params['dev_mode'],
         '语言类型': params['language_type'],
     }])
-    st.dataframe(param_df, use_container_width=True, hide_index=True)
+    st.dataframe(param_df, width="stretch", hide_index=True)
 
     st.markdown('**模型预测结果**')
     pred_rows = []
@@ -70,14 +70,14 @@ def render_report(params, predictions):
             '预测工作量 (人月)': f'{val:.2f}',
             '推荐': '★' if name == RECOMMENDED_MODEL else '',
         })
-    st.dataframe(pd.DataFrame(pred_rows), use_container_width=True, hide_index=True)
+    st.dataframe(pd.DataFrame(pred_rows), width="stretch", hide_index=True)
 
     rec_effort = predictions[RECOMMENDED_MODEL]
     st.markdown('**工期与人力换算**')
     schedule = []
     for size in [1, 2, 3, 5]:
         schedule.append({'团队规模 (人)': size, '预计工期 (月)': f'{rec_effort / size:.1f}'})
-    st.dataframe(pd.DataFrame(schedule), use_container_width=True, hide_index=True)
+    st.dataframe(pd.DataFrame(schedule), width="stretch", hide_index=True)
 
     model_names = list(predictions.keys())
     short = [SHORT_NAMES[n] for n in model_names]
@@ -88,7 +88,7 @@ def render_report(params, predictions):
         text=[f'{v:.2f}' for v in values], textposition='outside',
     ))
     fig.update_layout(yaxis_title='Predicted Effort (Person-Months)', height=350)
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(fig, width="stretch")
 
     best_team = 3 if rec_effort > 6 else 2 if rec_effort > 3 else 1
     duration = rec_effort / best_team
@@ -138,14 +138,14 @@ if st.button('开始估算', type='primary'):
             params_b['project_name']: [f"{rec_b:.2f}"],
             '差异': [f"{abs(rec_a - rec_b):.2f}"],
         })
-        st.dataframe(compare_df, use_container_width=True, hide_index=True)
+        st.dataframe(compare_df, width="stretch", hide_index=True)
         st.session_state['last_predictions'] = [(params_a, preds_a), (params_b, preds_b)]
     else:
         render_report(params_a, preds_a)
         st.session_state['last_predictions'] = [(params_a, preds_a)]
 
+if st.session_state.get('last_predictions'):
     st.markdown('---')
-
     btn_cols = st.columns(2)
     with btn_cols[0]:
         if st.button('保存到数据库'):
@@ -163,9 +163,8 @@ if st.button('开始估算', type='primary'):
                     'recommended_effort': preds[RECOMMENDED_MODEL],
                 })
             st.success('已保存到数据库！')
-
     with btn_cols[1]:
-        for params, preds in st.session_state.get('last_predictions', []):
+        for params, preds in st.session_state['last_predictions']:
             pdf_bytes = generate_pdf(params, preds, RECOMMENDED_MODEL)
             st.download_button(
                 f"下载 PDF — {params['project_name']}",
