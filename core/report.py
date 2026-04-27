@@ -137,3 +137,7 @@ def generate_pdf(project_data: dict, predictions: dict, recommended_model: str):
 
 
 
+
+
+
+
