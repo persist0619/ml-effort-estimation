@@ -143,8 +143,13 @@ def get_feature_importances(X, y):
     rf = RandomForestRegressor(n_estimators=200, max_depth=10, max_features='sqrt', random_state=42)
     rf.fit(X, y)
     labels = [
-        'Function Points', 'Project Complexity', 'Code Size (KLoC)',
-        'Team Experience', 'Tool Maturity', 'Development Mode', 'Language Type',
+        'Function Points（功能点计数）',
+        'Project Complexity（项目复杂度）',
+        'Code Size KLoC（代码规模/千行）',
+        'Team Experience（团队经验）',
+        'Tool Maturity（工具成熟度）',
+        'Development Mode（开发模式）',
+        'Language Type（语言类型）',
     ]
     importances = rf.feature_importances_
     result = sorted(zip(labels, importances), key=lambda x: x[1], reverse=True)
